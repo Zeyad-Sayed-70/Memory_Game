@@ -5,7 +5,7 @@ let cards = document.querySelectorAll(".memory-game .card");
 let themes = document.querySelectorAll(".swither-theme span");
 const amounts = document.querySelector('.amounts');
 
-
+// Main Variables
 let num = 20;
 let isPlay = false;
 let select = 0;
@@ -34,31 +34,20 @@ amounts.addEventListener('click', (ev) => {
     }
 });
 
-// Add Theme to cards
-function theme() {
-    themes.forEach(ev => {
-        ev.addEventListener("click", function(e) {
-            cards.forEach(el => { el.style.backgroundColor = `${e.target.getAttribute("data-color")}` })
-            // Add Theme To LC
-            localStorage.setItem("theme", e.target.getAttribute("data-color"));
-        })
-    })
-    // Get LC Theme
-    cards.forEach(el => { el.style.backgroundColor = `${localStorage.getItem("theme")}` });
-}
-
-
-
 memoryGame.addEventListener("click", e => {
     if ( e.target.classList.contains("card") && !e.target.classList.contains("correct") && clickable) {
+        // Show Numbers in First Click
         if ( !isPlay ) {
             showNums();
             isPlay = true;
             clickable = false;
             clickAbleWhen(2);
         }
+
         rep++;
+
         if ( isPlay && rep !== 1 ) {
+            // First Click to Card
             if ( select < 2 ) {
                 if ( e.target !== past ) {
                     e.target.innerText = e.target.getAttribute("num");
@@ -67,7 +56,8 @@ memoryGame.addEventListener("click", e => {
             }
 
             if ( select === 2 ) {
-                compair(past, e.target);
+                // Second Click to Card & check it with the first
+                compare(past, e.target);
                 select = 0;
                 clickable = false;
                 clickAbleWhen(1);
@@ -81,7 +71,24 @@ memoryGame.addEventListener("click", e => {
 
 
 
+function theme() {
+    // Change Theme of Game
+
+    themes.forEach(ev => {
+        ev.addEventListener("click", function(e) {
+            cards.forEach(el => { el.style.backgroundColor = `${e.target.getAttribute("data-color")}` })
+            // Add Theme To LC
+            localStorage.setItem("theme", e.target.getAttribute("data-color"));
+        })
+    })
+    // Get LC Theme
+    cards.forEach(el => { el.style.backgroundColor = `${localStorage.getItem("theme")}` });
+}
+
 function createCards() {
+    // function to create cards
+    // amount of cards is [nums] => variable
+
     memoryGame.innerHTML = '';
     for ( let i = 0; i < num; i++ ) {
         let card = document.createElement("div");
@@ -118,8 +125,9 @@ function randomNumber() {
     });
 }
 
-
 function showNums() {
+    // Show all numbers in the first click
+
     cards.forEach(e => {
         e.innerText = e.getAttribute("num");
     })
@@ -131,14 +139,15 @@ function showNums() {
     }, 2000)
 }
 
-function compair(c1, c2) {
+function compare(c1, c2) {
+    // compare between two card if the same or not
+
     if ( c1.getAttribute("num") === c2.getAttribute("num") ) {
         c1.classList.add("correct");
         c2.classList.add("correct");
     } else {
         staticNum();
     }
-
 
     setTimeout(() => {
         cards.forEach(e => {
@@ -152,6 +161,8 @@ function compair(c1, c2) {
 }
 
 function staticNum() {
+    //  Cards had done
+
     cards.forEach(e => {
         if ( e.className.includes("correct") ) {
             e.innerText = e.getAttribute("num");
@@ -160,12 +171,16 @@ function staticNum() {
 }
 
 function clickAbleWhen(t) {
+    // function avalable to you click or not
+
     setTimeout(function() {
         clickable = true;
     }, t * 1000)
 }
 
 function checkWin() {
+    // check if all cards is done
+
     let count = 0;;
     cards.forEach(e => {
         if ( e.classList.contains("correct") )
